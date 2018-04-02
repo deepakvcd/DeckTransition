@@ -267,7 +267,7 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
             presentedViewController.view.addGestureRecognizer(pan!)
         }
 
-        presentCompletion?(completed)
+        presentCompletion?(completed) 
     }
 	
     // MARK: - Layout update methods
