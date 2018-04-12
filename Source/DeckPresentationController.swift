@@ -26,12 +26,14 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     
     private var isSwipeToDismissGestureEnabled = true
     private var pan: UIPanGestureRecognizer?
+    private var panGestures = [UIPanGestureRecognizer]()
     private var scrollViewUpdater: ScrollViewUpdater?
     
     private let backgroundView = UIView()
     private let roundedViewForPresentingView = RoundedView()
     private let roundedViewForPresentedView = RoundedView()
-    
+    private var presentedVCScrollView : UIScrollView?
+
     private let snapshotViewContainer = UIView()
     private var snapshotView: UIView?
     
@@ -64,7 +66,9 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
         self.presentCompletion = presentCompletion
         self.dismissAnimation = dismissAnimation
         self.dismissCompletion = dismissCompletion
-        
+        let detector = ScrollViewDetector(withViewController: presentedViewController)
+                    presentedVCScrollView = detector.scrollView
+
         NotificationCenter.default.addObserver(self, selector: #selector(updateForStatusBar), name: .UIApplicationDidChangeStatusBarFrame, object: nil)
     }
 
@@ -260,11 +264,34 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
         ])
         
         if isSwipeToDismissGestureEnabled {
-            pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
-            pan!.delegate = self
-            pan!.maximumNumberOfTouches = 1
-            pan!.cancelsTouchesInView = false
-            presentedViewController.view.addGestureRecognizer(pan!)
+            panGestures = [UIPanGestureRecognizer]()
+            
+            let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
+            pan.delegate = self
+            pan.maximumNumberOfTouches = 1
+            pan.cancelsTouchesInView = false
+            presentedVCScrollView?.addGestureRecognizer(pan)
+            self.pan = pan
+            
+            panGestures.append(pan)
+            //containerView.addGestureRecognizer(pan!)
+            
+            for view in presentedViewController.view.subviews {
+                
+                if let _ = view as? UIScrollView {
+                    //
+                } else {
+                    let gesture = UIPanGestureRecognizer(target : self,action : #selector(handlePan))
+                    gesture.delegate = self
+                    view.addGestureRecognizer(gesture)
+                    panGestures.append(gesture)
+                }
+            }
+            
+            let panForRoundView = UIPanGestureRecognizer(target : self,action : #selector(handlePan))
+            panForRoundView.delegate = self
+            roundedViewForPresentedView.addGestureRecognizer(panForRoundView)
+            panGestures.append(panForRoundView)
         }
 
         presentCompletion?(completed) 
@@ -557,7 +584,7 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     }
     
     @objc private func handlePan(gestureRecognizer: UIPanGestureRecognizer) {
-        guard gestureRecognizer.isEqual(pan), isSwipeToDismissGestureEnabled else {
+        guard  (panGestures.contains(gestureRecognizer) && isSwipeToDismissGestureEnabled) else {
             return
         }
         
@@ -569,6 +596,9 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
                 scrollViewUpdater = ScrollViewUpdater(
                     withRootView: presentedViewController.view,
                     scrollView: scrollView)
+                if !gestureRecognizer.isEqual(pan) {
+                    scrollViewUpdater?.isDismissEnabled = true
+                }
             }
             gestureRecognizer.setTranslation(CGPoint(x: 0, y: 0), in: containerView)
         
@@ -637,7 +667,7 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     // MARK: - UIGestureRecognizerDelegate methods
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        guard gestureRecognizer.isEqual(pan) else {
+        guard  let panGesture =  gestureRecognizer as? UIPanGestureRecognizer, panGestures.contains(panGesture) else {
             return false
         }
         

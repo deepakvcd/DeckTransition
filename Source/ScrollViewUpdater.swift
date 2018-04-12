@@ -81,10 +81,10 @@ final class ScrollViewUpdater {
             isDismissEnabled = false
         } else {
             if scrollView.isDecelerating {
-                rootView.transform = CGAffineTransform(translationX: 0, y: -offset)
-                scrollView.subviews.forEach {
-                    $0.transform = CGAffineTransform(translationX: 0, y: offset)
-                }
+               // rootView.transform = CGAffineTransform(translationX: 0, y: -offset)
+               // scrollView.subviews.forEach {
+                //    $0.transform = CGAffineTransform(translationX: 0, y: offset)
+               // }
             } else {
                 scrollView.bounces = false
                 isDismissEnabled = true
