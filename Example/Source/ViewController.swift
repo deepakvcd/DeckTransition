@@ -38,6 +38,8 @@ class ViewController: UIViewController {
         let transitionDelegate = DeckTransitioningDelegate()
         modal.transitioningDelegate = transitionDelegate
         modal.modalPresentationStyle = .custom
+        transitionDelegate.isSwipableSubViews = true
+        transitionDelegate.transitionMode = .defaultTransition
         present(modal, animated: true, completion: nil)
     }
 }

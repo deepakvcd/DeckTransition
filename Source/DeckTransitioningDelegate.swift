@@ -8,6 +8,14 @@
 
 import UIKit
 
+
+//Customisation - transition modes
+public enum TransitionMode {
+    case sameAsOriginal
+    case endRect(CGRect)
+    case defaultTransition
+}
+
 /// The DeckTransitioningDelegate class vends out the presentation and animation
 /// controllers required to present a view controller with the Deck transition
 /// style
@@ -33,9 +41,14 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
     private let dismissDuration: TimeInterval?
     private let dismissAnimation: (() -> ())?
     private let dismissCompletion: ((Bool) -> ())?
-    //
+    
+    // Customization - open to setting
     public var isSwipableScrollView = true
     public var isSwipableSubViews = true
+    
+    //Animation
+    public var originalFrame : CGRect = .zero
+    public var transitionMode : TransitionMode = .defaultTransition
     //
     
     // MARK: - Initializers
@@ -87,7 +100,17 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
     ///   - source: The view controller whose `present` method is called
     /// - Returns: An animation controller that animates the modal presentation
     public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return DeckPresentingAnimationController(duration: presentDuration)
+        //Customization
+        switch transitionMode {
+        case .defaultTransition:
+            return DeckPresentingAnimationController(duration: presentDuration)
+        default:
+            let animator = PopAnimator()
+            animator.presenting = true
+            animator.originFrame = originalFrame
+            return animator
+        }
+        //return DeckPresentingAnimationController(duration: presentDuration)
     }
     
     /// Returns an animation controller that animates the modal dismissal
@@ -98,7 +121,22 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
     /// - Parameter dismissed: The modal view controller which will be dismissed
     /// - Returns: An animation controller that animates the modal dismisall
     public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        return DeckDismissingAnimationController(duration: dismissDuration)
+        //Customization
+        switch transitionMode {
+        case .defaultTransition:
+            return DeckDismissingAnimationController(duration: dismissDuration)
+        case .endRect(let rect):
+            let animator = PopAnimator()
+            animator.presenting = false
+            animator.originFrame = rect
+            return animator
+        case .sameAsOriginal:
+            let animator = PopAnimator()
+            animator.presenting = false
+            animator.originFrame = originalFrame
+            return animator
+        }
+       // return DeckDismissingAnimationController(duration: dismissDuration)
     }
     
     /// Returns a presentation controller that manages the modal presentation

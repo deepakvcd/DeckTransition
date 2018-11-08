@@ -18,7 +18,7 @@ class ModalViewController: UIViewController {
         
         modalPresentationCapturesStatusBarAppearance = true
         
-        view.backgroundColor = .white
+        view.backgroundColor = .orange 
         
         textView.isEditable = false
         textView.isSelectable = false
