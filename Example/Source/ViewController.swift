@@ -40,6 +40,7 @@ class ViewController: UIViewController {
         modal.modalPresentationStyle = .custom
         transitionDelegate.isSwipableSubViews = true
         transitionDelegate.transitionMode = .defaultTransition
+        transitionDelegate.presentedVCTopIndicatorBarColor = UIColor.gray.withAlphaComponent(0.6)
         present(modal, animated: true, completion: nil)
     }
 }

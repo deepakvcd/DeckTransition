@@ -45,7 +45,7 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
     // Customization - open to setting
     public var isSwipableScrollView = true
     public var isSwipableSubViews = true
-    
+    public var presentedVCTopIndicatorBarColor : UIColor? = nil
     //Animation
     public var originalFrame : CGRect = .zero
     public var transitionMode : TransitionMode = .defaultTransition
@@ -160,6 +160,9 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
             dismissAnimation: dismissAnimation,
             dismissCompletion: dismissCompletion)
         presentationController.transitioningDelegate = self
+        if let color = self.presentedVCTopIndicatorBarColor {
+            presentationController.setTopIndicatorForPresentedView(withColor: color)
+        }
         //Customisation
         presentationController.isSwipableSubViews = self.isSwipableSubViews
         presentationController.isSwipableScrollView = self.isSwipableScrollView

@@ -23,9 +23,10 @@ final class RoundedView: UIView {
     
     private let leftCorner = CornerView()
     private let rightCorner = CornerView()
-    
+    private var barView : UIView? = nil
+
     // MARK: - Initializers
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()
@@ -55,6 +56,15 @@ final class RoundedView: UIView {
         addSubview(rightCorner)
     }
     
+    public func addTopBarIndicator(with color: UIColor){
+        let barView = UIView(frame: CGRect(x: 0, y: 0, width: 35, height: 5))
+        barView.backgroundColor = color
+        self.addSubview(barView)
+        self.bringSubviewToFront(barView)
+        self.barView = barView
+        self.setNeedsLayout()
+        self.layoutIfNeeded()
+    }
     // MARK: - UIView methods
     
     override func layoutSubviews() {
@@ -62,6 +72,11 @@ final class RoundedView: UIView {
         
         leftCorner.frame = bounds
         rightCorner.frame = bounds
+        if let view = barView {
+            view.center = CGPoint(x: self.bounds.width / 2, y: self.bounds.height / 2 + 2)
+            view.layer.cornerRadius = view.frame.size.height / 2
+            view.clipsToBounds = true
+        }
     }
     
 }

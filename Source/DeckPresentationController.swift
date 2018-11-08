@@ -81,6 +81,9 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
         updateSnapshotView()
     }
     
+    public func setTopIndicatorForPresentedView(withColor color : UIColor){
+        roundedViewForPresentedView.addTopBarIndicator(with: color)
+    }
     // MARK: - Sizing
     
     private var statusBarHeight: CGFloat {
