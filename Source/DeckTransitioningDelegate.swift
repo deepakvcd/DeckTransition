@@ -33,6 +33,10 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
     private let dismissDuration: TimeInterval?
     private let dismissAnimation: (() -> ())?
     private let dismissCompletion: ((Bool) -> ())?
+    //
+    public var isSwipableScrollView = true
+    public var isSwipableSubViews = true
+    //
     
     // MARK: - Initializers
     
@@ -118,6 +122,9 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
             dismissAnimation: dismissAnimation,
             dismissCompletion: dismissCompletion)
         presentationController.transitioningDelegate = self
+        //Customisation
+        presentationController.isSwipableSubViews = self.isSwipableSubViews
+        presentationController.isSwipableScrollView = self.isSwipableScrollView
         return presentationController
     }
     
