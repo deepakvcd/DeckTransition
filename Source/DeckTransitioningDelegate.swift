@@ -45,10 +45,12 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
     // Customization - open to setting
     public var isSwipableScrollView = true
     public var isSwipableSubViews = true
+    public var isSwipableTopView = true
     public var presentedVCTopIndicatorBarColor : UIColor? = nil
     //Animation
     public var originalFrame : CGRect = .zero
     public var transitionMode : TransitionMode = .defaultTransition
+    public var deckConstants : DeckConstants?
     //
     
     // MARK: - Initializers
@@ -61,16 +63,16 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
     /// - Parameters:
     ///   - isSwipeToDismissEnabled: Whether the modal view controller should
     ///     be dismissed with a swipe gesture from top to bottom
-    ///	  - presentDuration: The duration for the presentation animation
+    ///      - presentDuration: The duration for the presentation animation
     ///   - presentAnimation: An animation block that will be performed
-    ///		alongside the card presentation animation
+    ///        alongside the card presentation animation
     ///   - presentCompletion: A block that will be run after the card has been
-    ///		presented
-    ///	  - dismissDuration: The duration for the dismissal animation
+    ///        presented
+    ///      - dismissDuration: The duration for the dismissal animation
     ///   - dismissAnimation: An animation block that will be performed
-    ///		alongside the card dismissal animation
+    ///        alongside the card dismissal animation
     ///   - dismissCompletion: A block that will be run after the card has been
-    ///		dismissed
+    ///        dismissed
     @objc public init(isSwipeToDismissEnabled: Bool = true,
                       presentDuration: NSNumber? = nil,
                       presentAnimation: (() -> ())? = nil,
@@ -136,7 +138,7 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
             animator.originFrame = originalFrame
             return animator
         }
-       // return DeckDismissingAnimationController(duration: dismissDuration)
+        // return DeckDismissingAnimationController(duration: dismissDuration)
     }
     
     /// Returns a presentation controller that manages the modal presentation
@@ -166,6 +168,12 @@ public final class DeckTransitioningDelegate: NSObject, UIViewControllerTransiti
         //Customisation
         presentationController.isSwipableSubViews = self.isSwipableSubViews
         presentationController.isSwipableScrollView = self.isSwipableScrollView
+        presentationController.isSwipableTopView = self.isSwipableTopView
+        
+        if let deckConstants = deckConstants {
+            presentationController.deckConstant = deckConstants
+        }
+        
         return presentationController
     }
     

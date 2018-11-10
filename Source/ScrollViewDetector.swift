@@ -50,20 +50,30 @@ final class ScrollViewDetector {
     ///   failing which the lowermost `UIScrollView` in the view's top level
     ///   subviews, or nil if one isn't found.
     private func getScrollView(fromViewController viewController: UIViewController) -> UIScrollView? {
-        if let deckViewController = viewController as? DeckTransitionViewControllerProtocol,
+        let controller : UIViewController
+        
+        if let nav = viewController as? UINavigationController,let topController = nav.topViewController {
+            controller = topController
+        } else {
+            controller = viewController
+        }
+        
+        if let deckViewController = controller as? DeckTransitionViewControllerProtocol,
            let scrollView = deckViewController.scrollViewForDeck {
             return scrollView
         }
         
-        if let scrollView = viewController.view as? UIScrollView {
+        if let scrollView = controller.view as? UIScrollView {
             return scrollView
         }
         
-        for subview in viewController.view.subviews {
+        
+        for subview in controller.view.subviews {
             if let scrollView = subview as? UIScrollView {
                 return scrollView
             }
         }
+        
         
         return nil
     }

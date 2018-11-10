@@ -11,8 +11,7 @@ import UIKit
 final class RoundedView: UIView {
     
     // MARK: - Public variables
-    
-    public var cornerRadius = Constants.cornerRadius {
+    public var cornerRadius : CGFloat = 0 {
         didSet {
             leftCorner.cornerRadius = cornerRadius
             rightCorner.cornerRadius = cornerRadius
@@ -24,9 +23,9 @@ final class RoundedView: UIView {
     private let leftCorner = CornerView()
     private let rightCorner = CornerView()
     private var barView : UIView? = nil
-
+    
     // MARK: - Initializers
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setup()

@@ -39,13 +39,13 @@ final class DeckPresentingAnimationController: NSObject, UIViewControllerAnimate
             options: .curveEaseOut,
             animations: {
                 presentedViewController.view.frame = finalFrameForPresentedView
-            }, completion: { finished in
-                transitionContext.completeTransition(finished)
-            })
+        }, completion: { finished in
+            transitionContext.completeTransition(finished)
+        })
     }
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return duration ?? Constants.defaultAnimationDuration
+        return duration ?? DeckConstants.defaultAnimationDuration
     }
     
 }

@@ -10,7 +10,7 @@ import UIKit
 import DeckTransition
 
 class ViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -39,8 +39,12 @@ class ViewController: UIViewController {
         modal.transitioningDelegate = transitionDelegate
         modal.modalPresentationStyle = .custom
         transitionDelegate.isSwipableSubViews = true
+        transitionDelegate.isSwipableScrollView = true
         transitionDelegate.transitionMode = .defaultTransition
         transitionDelegate.presentedVCTopIndicatorBarColor = UIColor.gray.withAlphaComponent(0.6)
+        let constants = DeckConstants()
+        constants.insetForPresentedView = 200
+        transitionDelegate.deckConstants = constants
         present(modal, animated: true, completion: nil)
     }
 }

@@ -45,13 +45,13 @@ final class DeckDismissingAnimationController: NSObject, UIViewControllerAnimate
             options: .curveEaseOut,
             animations: {
                 presentedViewController.view.frame = offscreenFrame
-            }, completion: { finished in
-                transitionContext.completeTransition(finished)
-            })
+        }, completion: { finished in
+            transitionContext.completeTransition(finished)
+        })
     }
     
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return duration ?? Constants.defaultAnimationDuration
+        return duration ?? DeckConstants.defaultAnimationDuration
     }
     
 }
