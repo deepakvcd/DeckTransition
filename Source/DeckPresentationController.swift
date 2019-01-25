@@ -141,6 +141,24 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
         
         /// The snapshot view initially has the same frame as the presentingView
         containerView.insertSubview(snapshotViewContainer, belowSubview: presentedViewController.view)
+        
+        if (deckConstant.topSplitterNeeded) {
+            let view = UIView()
+            view.backgroundColor = deckConstant.topSplitterColor
+            view.layer.cornerRadius = deckConstant.topSplitterCornerRadius
+            containerView.addSubview(view)
+            view.translatesAutoresizingMaskIntoConstraints = false
+            view.widthAnchor.constraint(equalToConstant: deckConstant.topSplitterWidth).isActive = true
+            view.heightAnchor.constraint(equalToConstant: deckConstant.topSplitterHeight).isActive = true
+            view.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
+            var topOffset  : CGFloat = 0
+            if #available(iOS 11.0, *) {
+                topOffset = containerView.safeAreaInsets.top
+            }
+            
+            view.topAnchor.constraint(equalTo: containerView.topAnchor , constant: deckConstant.insetForPresentedView + topOffset - deckConstant.topSplitterVerticalOffset).isActive = true
+        }
+        
         snapshotViewContainer.frame = initialFrame
         updateSnapshotView()
         

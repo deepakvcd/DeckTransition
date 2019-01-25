@@ -24,6 +24,14 @@ open class DeckConstants {
     /// the presented and the presenting views
     public var insetForPresentedView: CGFloat = 8
     
+    //Params to configure splitter in the top of presented controller
+    public var topSplitterNeeded : Bool = false
+    public var topSplitterColor : UIColor = UIColor.white
+    public var topSplitterWidth : CGFloat = 35
+    public var topSplitterHeight : CGFloat = 5
+    public var topSplitterCornerRadius : CGFloat = 2.5
+    public var topSplitterVerticalOffset : CGFloat = 15
+    
     public init() {
         
     }
