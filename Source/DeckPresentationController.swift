@@ -54,6 +54,7 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     private var panGestures = [UIPanGestureRecognizer]()
     private var presentedVCScrollView : UIScrollView?
     public var deckConstant : DeckConstants = DeckConstants()
+    public var topSplitterView : UIView?
     //
     
     // MARK: - Initializers
@@ -142,21 +143,15 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
         /// The snapshot view initially has the same frame as the presentingView
         containerView.insertSubview(snapshotViewContainer, belowSubview: presentedViewController.view)
         
+        //Top Splitter for presented Controller
         if (deckConstant.topSplitterNeeded) {
             let view = UIView()
             view.backgroundColor = deckConstant.topSplitterColor
             view.layer.cornerRadius = deckConstant.topSplitterCornerRadius
             containerView.addSubview(view)
-            view.translatesAutoresizingMaskIntoConstraints = false
-            view.widthAnchor.constraint(equalToConstant: deckConstant.topSplitterWidth).isActive = true
-            view.heightAnchor.constraint(equalToConstant: deckConstant.topSplitterHeight).isActive = true
-            view.centerXAnchor.constraint(equalTo: containerView.centerXAnchor).isActive = true
-            var topOffset  : CGFloat = 0
-            if #available(iOS 11.0, *) {
-                topOffset = containerView.safeAreaInsets.top
-            }
-            
-            view.topAnchor.constraint(equalTo: containerView.topAnchor , constant: deckConstant.insetForPresentedView + topOffset - deckConstant.topSplitterVerticalOffset).isActive = true
+            view.translatesAutoresizingMaskIntoConstraints = true
+            self.topSplitterView = view
+            view.frame = CGRect(origin: CGPoint(x: containerView.center.x - (deckConstant.topSplitterWidth / 2) , y: frameOfPresentedViewInContainerView.origin.y - deckConstant.topSplitterVerticalOffset), size: CGSize(width : deckConstant.topSplitterWidth,height : deckConstant.topSplitterHeight))
         }
         
         snapshotViewContainer.frame = initialFrame
@@ -517,6 +512,8 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     private func presentedViewWasUpdated() {
         let offset = presentedViewController.view.frame.origin.y
         roundedViewForPresentedView.frame = CGRect(x: 0, y: offset, width: containerView!.bounds.width, height: deckConstant.cornerRadius)
+        
+        topSplitterView?.frame = CGRect(origin: CGPoint(x: containerView!.center.x - (deckConstant.topSplitterWidth / 2) , y: offset - deckConstant.topSplitterVerticalOffset), size: CGSize(width : deckConstant.topSplitterWidth,height : deckConstant.topSplitterHeight))
     }
     
     // MARK: - Dismissal
