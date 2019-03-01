@@ -22,7 +22,8 @@ open class DeckConstants {
     /// As best as I can tell using my iPhone and a bunch of iOS UI templates I
     /// came across online, 8 points is the distance between the top edges of
     /// the presented and the presenting views
-    public var insetForPresentedView: CGFloat = 8
+    public var initialInsetForPresentedView: CGFloat = 8
+    public var maxAllowInsetForPresentedView: CGFloat?
     
     //Params to configure splitter in the top of presented controller
     public var topSplitterNeeded : Bool = false

@@ -43,7 +43,7 @@ class ViewController: UIViewController {
         transitionDelegate.transitionMode = .defaultTransition
         transitionDelegate.presentedVCTopIndicatorBarColor = UIColor.gray.withAlphaComponent(0.6)
         let constants = DeckConstants()
-        constants.insetForPresentedView = 200
+        constants.initialInsetForPresentedView = 200
         transitionDelegate.deckConstants = constants
         present(modal, animated: true, completion: nil)
     }

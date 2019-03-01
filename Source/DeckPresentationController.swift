@@ -34,6 +34,7 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     
     private let snapshotViewContainer = UIView()
     private var snapshotView: UIView?
+    private var topInset : CGFloat?
     
     private var snapshotViewTopConstraint: NSLayoutConstraint?
     private var snapshotViewWidthConstraint: NSLayoutConstraint?
@@ -106,7 +107,7 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
             return .zero
         }
         
-        let yOffset = ManualLayout.presentingViewTopInset + deckConstant.insetForPresentedView
+        let yOffset = ManualLayout.presentingViewTopInset + (topInset ?? deckConstant.initialInsetForPresentedView)
         
         return CGRect(x: 0,
                       y: yOffset,
@@ -644,7 +645,7 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
             if let scrollView = detector.scrollView , isSwipableScrollView {
                 scrollViewUpdater = ScrollViewUpdater(
                     withRootView: presentedViewController.view,
-                    scrollView: scrollView)
+                    scrollView: scrollView,delegate : self)
             }
             
             if !gestureRecognizer.isEqual(pan) {
@@ -712,7 +713,16 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
             if translation >= dismissThreshold {
                 presentedViewController.dismiss(animated: true, completion: nil)
             }
+        } else if translation < -20 {
+            expandPresentedControl()
         }
+    }
+    
+    private func expandPresentedControl() {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.topInset = self.deckConstant.maxAllowInsetForPresentedView
+            self.presentedView?.frame = self.frameOfPresentedViewInContainerView
+        })
     }
     
     // MARK: - UIGestureRecognizerDelegate methods
@@ -729,4 +739,25 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
         return true
     }
     
+}
+extension DeckPresentationController : ScrollUpdateProtocol{
+
+    func didScrollWithEnoughVelocity() {
+        if !isPresentedControllerExpanded {
+            expandPresentedControl()
+        }
+    }
+    
+    var isPresentedControllerExpanded : Bool {
+        if let maxY = deckConstant.maxAllowInsetForPresentedView {
+            let yOffset = ManualLayout.presentingViewTopInset + maxY
+            if presentedViewController.view.frame.origin.y == yOffset {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return true
+        }
+    }
 }

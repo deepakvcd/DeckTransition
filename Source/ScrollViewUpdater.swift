@@ -8,6 +8,11 @@
 
 import UIKit
 
+protocol ScrollUpdateProtocol : class {
+    func didScrollWithEnoughVelocity()
+    var isPresentedControllerExpanded : Bool { get }
+}
+
 /// This class is responsible for animating and managing state for a given
 /// `UIScrollView`.
 ///
@@ -28,12 +33,15 @@ final class ScrollViewUpdater {
     private weak var rootView: UIView?
     private weak var scrollView: UIScrollView?
     private var observation: NSKeyValueObservation?
+    private weak var delegate : ScrollUpdateProtocol?
     
     // MARK: - Initializers
     
-    init(withRootView rootView: UIView, scrollView: UIScrollView) {
+    init(withRootView rootView: UIView, scrollView: UIScrollView,delegate : ScrollUpdateProtocol) {
         self.rootView = rootView
         self.scrollView = scrollView
+        
+        self.delegate = delegate
         self.observation = scrollView.observe(\.contentOffset, options: [.initial], changeHandler: { [weak self] _, _ in
             self?.scrollViewDidScroll()
         })
@@ -76,9 +84,17 @@ final class ScrollViewUpdater {
         /// The pan gesture which controls the dismissal is allowed to take over
         /// now, and the scrollView's natural bounce is stopped.
         
+        let velocity = scrollView.panGestureRecognizer.velocity(in: scrollView)
         if offset > 0 {
-            scrollView.bounces = true
-            isDismissEnabled = false
+            if !(delegate?.isPresentedControllerExpanded ?? false) && velocity.y < -1900 {
+                scrollView.isScrollEnabled = false
+                scrollView.isScrollEnabled = true
+                scrollView.setContentOffset(CGPoint.zero, animated: false)
+                delegate?.didScrollWithEnoughVelocity()
+            } else {
+                scrollView.bounces = true
+                isDismissEnabled = false
+            }
         } else {
             if scrollView.isDecelerating {
                 rootView.transform = CGAffineTransform(translationX: 0, y: -offset)
