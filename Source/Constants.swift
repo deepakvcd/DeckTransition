@@ -25,6 +25,8 @@ open class DeckConstants {
     public var initialInsetForPresentedView: CGFloat = 8
     public var maxAllowInsetForPresentedView: CGFloat?
     
+    public var allowExpansionEvenInSmallContent = true
+    
     //Params to configure splitter in the top of presented controller
     public var topSplitterNeeded : Bool = false
     public var topSplitterColor : UIColor = UIColor.white

@@ -27,10 +27,7 @@ class ModalViewController: UIViewController {
         textView.font = UIFont.systemFont(ofSize: 40, weight: .heavy)
         textView.textAlignment = .center
         textView.text = """
-        This is the presented modal view controller.\n
-        When youʼre scrolled to the very top of the view, you can swipe downwards to dismiss it.\n
-        The swipe works in one fluid gesture if youʼre scrolling up as well.\n
-        You can also tap again to present another modal
+        This is the presented modal view controresent another modal
         """
         
         view.addSubview(textView)

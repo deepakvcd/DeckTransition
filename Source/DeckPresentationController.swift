@@ -143,7 +143,7 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
         
         /// The snapshot view initially has the same frame as the presentingView
         containerView.insertSubview(snapshotViewContainer, belowSubview: presentedViewController.view)
-        
+        containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTappedContainer)))
         //Top Splitter for presented Controller
         if (deckConstant.topSplitterNeeded) {
             let view = UIView()
@@ -460,6 +460,11 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
         snapshotView = currentSnapshotView
     }
     
+    @objc
+    private func didTappedContainer() {
+        self.presentedViewController.dismiss(animated: true, completion: nil)
+    }
+    
     /// Thie method updates the aspect ratio and the height of the snapshot view
     /// used to represent the presenting view controller.
     ///
@@ -719,6 +724,10 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
     }
     
     private func expandPresentedControl() {
+        guard !isPresentedControllerExpanded else {
+            return
+        }
+        
         UIView.animate(withDuration: 0.3, animations: {
             self.topInset = self.deckConstant.maxAllowInsetForPresentedView
             self.presentedView?.frame = self.frameOfPresentedViewInContainerView
@@ -743,12 +752,14 @@ final class DeckPresentationController: UIPresentationController, UIGestureRecog
 extension DeckPresentationController : ScrollUpdateProtocol{
 
     func didScrollWithEnoughVelocity() {
-        if !isPresentedControllerExpanded {
-            expandPresentedControl()
-        }
+        expandPresentedControl()
     }
     
     var isPresentedControllerExpanded : Bool {
+        if let scrollView = ScrollViewDetector(withViewController: presentedViewController).scrollView,scrollView.contentSize.height < scrollView.frame.size.height,!deckConstant.allowExpansionEvenInSmallContent {
+            return true
+        }
+        
         if let maxY = deckConstant.maxAllowInsetForPresentedView {
             let yOffset = ManualLayout.presentingViewTopInset + maxY
             if presentedViewController.view.frame.origin.y == yOffset {

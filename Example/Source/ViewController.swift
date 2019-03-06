@@ -20,8 +20,7 @@ class ViewController: UIViewController {
         label.textAlignment = .center
         label.numberOfLines = 0
         label.text = """
-        This is the presenting view controller.\n
-        Tap anywhere to show the modal.
+        This odal.
         """
         
         view.addSubview(label)
